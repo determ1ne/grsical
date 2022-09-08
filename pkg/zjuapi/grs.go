@@ -2,6 +2,7 @@ package zjuapi
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"github.com/rs/zerolog/log"
@@ -21,7 +22,7 @@ const (
 	Winter GrsSemester = 14
 )
 
-func (c *ZJUAPIClient) FetchTimetable(year int, semester GrsSemester) (io.Reader, error) {
+func (c *ZJUAPIClient) FetchTimetable(ctx context.Context, year int, semester GrsSemester) (io.Reader, error) {
 	// year - year+1 学年度
 	_, err := c.HttpClient.PostForm(changeLocaleUrl, url.Values{
 		"locale": {"zh_CN"},
@@ -29,14 +30,14 @@ func (c *ZJUAPIClient) FetchTimetable(year int, semester GrsSemester) (io.Reader
 	r, err := c.HttpClient.Get(fmt.Sprintf("http://grs.zju.edu.cn/py/page/student/grkcb.htm?xj=%d&xn=%d", semester, year))
 	if err != nil {
 		e := fmt.Sprintf("failed to fetch timetable for %d-%d, error: %s", year, semester, err)
-		log.Error().Msg(e)
+		log.Ctx(ctx).Error().Msg(e)
 		return nil, errors.New(e)
 	}
 	rb, err := io.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
 		e := fmt.Sprintf("failed to read timetable for %d-%d, error: %s", year, semester, err)
-		log.Error().Msg(e)
+		log.Ctx(ctx).Error().Msg(e)
 		return nil, errors.New(e)
 	}
 	return bytes.NewBuffer(rb), nil

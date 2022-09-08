@@ -2,6 +2,7 @@ package zjuapi
 
 import (
 	"bytes"
+	"context"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -81,20 +82,20 @@ func extractCookies(header http.Header) string {
 	return ""
 }
 
-func (c *ZJUAPIClient) Login(payloadUrl, username, password string) error {
+func (c *ZJUAPIClient) Login(ctx context.Context, payloadUrl, username, password string) error {
 	// see https://github.com/determ1ne/ejector/blob/fbc10d91b5d450cfa9f94a6ef22916463c9107f1/Ejector/Services/ZjuService.cs#L44
 	// stage 1: get csrf key
 	lpRes, err := c.HttpClient.Get(payloadUrl)
 	if err != nil {
 		e := fmt.Sprintf("can not access login page: %s", err)
-		log.Error().Msg(e)
+		log.Ctx(ctx).Error().Msg(e)
 		return errors.New(e)
 	}
 	pageContent, err := io.ReadAll(lpRes.Body)
 	lpRes.Body.Close()
 	if err != nil {
 		e := fmt.Sprintf("can not read login page: %s", err)
-		log.Error().Msg(e)
+		log.Ctx(ctx).Error().Msg(e)
 		return errors.New(e)
 	}
 	idxStart := bytes.Index(pageContent, []byte("execution\"")) + 18
@@ -105,27 +106,27 @@ func (c *ZJUAPIClient) Login(payloadUrl, username, password string) error {
 	pkRes, err := c.HttpClient.Get(publicKeyUrl)
 	if err != nil {
 		e := fmt.Sprintf("can not access pubkey: %s", err)
-		log.Error().Msg(e)
+		log.Ctx(ctx).Error().Msg(e)
 		return errors.New(e)
 	}
 	pkContent, err := io.ReadAll(pkRes.Body)
 	pkRes.Body.Close()
 	if err != nil {
 		e := fmt.Sprintf("can not read pubkey: %s", err)
-		log.Error().Msg(e)
+		log.Ctx(ctx).Error().Msg(e)
 		return errors.New(e)
 	}
 	var pkRaw pubkeyRaw
 	err = json.Unmarshal(pkContent, &pkRaw)
 	if err != nil {
 		e := fmt.Sprintf("can not unmarshal pubkey: %s", err)
-		log.Error().Msg(e)
+		log.Ctx(ctx).Error().Msg(e)
 		return errors.New(e)
 	}
 	pk, err := NewPubKey(pkRaw.N, pkRaw.E)
 	if err != nil {
 		e := fmt.Sprintf("can not create pubkey: %s", err)
-		log.Error().Msg(e)
+		log.Ctx(ctx).Error().Msg(e)
 		return errors.New(e)
 	}
 	encP := pk.Encrypt(password)
@@ -138,10 +139,9 @@ func (c *ZJUAPIClient) Login(payloadUrl, username, password string) error {
 		"execution": {string(csrf)},
 		"_eventId":  {"submit"},
 	})
-	a, _ := io.ReadAll(lRes.Body)
+	//_, _ = io.ReadAll(lRes.Body)
 	lRes.Body.Close()
 
-	print(a)
 	// 不代表登录成功
 	return nil
 }

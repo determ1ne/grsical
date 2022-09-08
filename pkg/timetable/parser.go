@@ -1,6 +1,7 @@
 package timetable
 
 import (
+	"context"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/rs/zerolog/log"
@@ -25,7 +26,7 @@ func GetTable(r io.Reader) (*html.Node, error) {
 	return table.Nodes[0], nil
 }
 
-func parseClass(a *html.Node) (Class, error) {
+func parseClass(ctx context.Context, a *html.Node) (Class, error) {
 	class := Class{}
 	children := getValidChildren(a)
 	if len(children) != 5 {
@@ -63,7 +64,7 @@ func parseClass(a *html.Node) (Class, error) {
 	default:
 		// 不是严重错误
 		class.Repeat = EveryWeek
-		log.Warn().Msgf("unsupported repeat pattern: %s", strings.TrimSpace(tr[1]))
+		log.Ctx(ctx).Warn().Msgf("unsupported repeat pattern: %s", strings.TrimSpace(tr[1]))
 	}
 	// RawDuration
 	var b strings.Builder
@@ -121,12 +122,12 @@ func getValidChildren(node *html.Node) []*html.Node {
 	return c
 }
 
-func ParseTable(node *html.Node) (*[]Class, error) {
+func ParseTable(ctx context.Context, node *html.Node) (*[]Class, error) {
 	trs := goquery.NewDocumentFromNode(node).Children()
 	if trs.Length() > 16 {
-		log.Warn().Msgf("too many tr element: %d", trs.Length())
+		log.Ctx(ctx).Warn().Msgf("too many tr element: %d", trs.Length())
 	} else if trs.Length() < 16 {
-		log.Error().Msgf("insufficient tr element: %d", trs.Length())
+		log.Ctx(ctx).Error().Msgf("insufficient tr element: %d", trs.Length())
 		return nil, fmt.Errorf("insufficient tr element")
 	}
 
@@ -160,7 +161,7 @@ func ParseTable(node *html.Node) (*[]Class, error) {
 				if attr.Key == "rowspan" {
 					span, err = strconv.Atoi(attr.Val)
 					if err != nil || span < 1 || span > 15 {
-						log.Error().Msgf("failed to parse rowspan, val was %s", attr.Val)
+						log.Ctx(ctx).Error().Msgf("failed to parse rowspan, val was %s", attr.Val)
 					}
 				}
 				for k := 0; k < span; k++ {
@@ -168,9 +169,9 @@ func ParseTable(node *html.Node) (*[]Class, error) {
 				}
 			}
 			for _, a := range aChildren {
-				class, err := parseClass(a)
+				class, err := parseClass(ctx, a)
 				if err != nil {
-					log.Error().Msgf("failed to parse class: %s", err.Error())
+					log.Ctx(ctx).Error().Msgf("failed to parse class: %s", err.Error())
 					return nil, nil
 				}
 				class.Duration.Starts = i

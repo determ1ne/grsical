@@ -1,0 +1,6 @@
+{
+  "fetch": [
+    {"year": 2022, "semester":  13, "firstDay":  "20220912"},
+    {"year": 2022, "semester":  14, "firstDay":  "20221107"}
+  ]
+}

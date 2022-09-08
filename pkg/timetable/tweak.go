@@ -7,11 +7,6 @@ const (
 	MatchOnce
 )
 
-type Match struct {
-	MatchType MatchType         `json:"match_type"`
-	MatchRule map[string]string `json:"match_rule"`
-}
-
 type TweakType int
 
 const (
@@ -20,11 +15,9 @@ const (
 	Duplicate
 )
 
-type TweakOp struct {
-}
-
 type Tweak struct {
-	Match []Match   `json:"match"`
-	Type  TweakType `json:"type"`
-	Op    []TweakOp `json:"op"`
+	MatchType MatchType              `json:"matchType"`
+	Type      TweakType              `json:"type"`
+	MatchRule map[string]interface{} `json:"rule"`
+	Op        map[string]interface{} `json:"op"`
 }
