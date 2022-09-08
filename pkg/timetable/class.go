@@ -18,6 +18,22 @@ const (
 	SpringSummer
 )
 
+var ClassStart = map[int]int{
+	1:  800,
+	2:  850,
+	3:  950,
+	4:  1040,
+	5:  1130,
+	6:  1315,
+	7:  1405,
+	8:  1455,
+	9:  1555,
+	10: 1645,
+	11: 1830,
+	12: 1920,
+	13: 2010,
+}
+
 type ClassDuration struct {
 	Starts int
 	Ends   int
