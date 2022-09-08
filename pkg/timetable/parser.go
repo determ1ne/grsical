@@ -36,26 +36,26 @@ func parseClass(a *html.Node) (Class, error) {
 		return class, fmt.Errorf("can not get class name")
 	}
 	class.Name = children[0].FirstChild.Data
-	// Term & Repeat
+	// Semester & Repeat
 	tr := strings.Split(children[1].Data, "||")
 	if len(tr) != 2 {
 		return class, fmt.Errorf("can not parse time and repeat: %s", children[1].Data)
 	}
 	switch strings.TrimSpace(tr[0]) {
 	case "秋":
-		class.Term = Autumn
+		class.Semester = Autumn
 	case "冬":
-		class.Term = Winter
+		class.Semester = Winter
 	case "秋冬":
-		class.Term = AutumnWinter
+		class.Semester = AutumnWinter
 	case "春":
-		class.Term = Spring
+		class.Semester = Spring
 	case "夏":
-		class.Term = Summer
+		class.Semester = Summer
 	case "春夏":
-		class.Term = SpringSummer
+		class.Semester = SpringSummer
 	default:
-		return class, fmt.Errorf("invalid term: %s", children[1].Data)
+		return class, fmt.Errorf("invalid semester: %s", children[1].Data)
 	}
 	switch strings.TrimSpace(tr[1]) {
 	case "每周":

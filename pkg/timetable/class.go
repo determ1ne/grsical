@@ -16,10 +16,10 @@ var RepeatDesc = map[Repeat]string{
 	EveryWeek: "每周",
 }
 
-type Term uint8
+type Semester uint8
 
 const (
-	Autumn Term = iota
+	Autumn Semester = iota
 	Winter
 	AutumnWinter
 	Spring
@@ -27,7 +27,7 @@ const (
 	SpringSummer
 )
 
-var TermDesc = map[Term]string{
+var SemesterDesc = map[Semester]string{
 	Autumn:       "秋",
 	Winter:       "冬",
 	AutumnWinter: "秋冬",
@@ -61,7 +61,7 @@ type ClassDuration struct {
 // Class 代表一次课，并非代表一类课
 type Class struct {
 	Name        string
-	Term        Term
+	Semester    Semester
 	Repeat      Repeat
 	Duration    ClassDuration
 	Teacher     string
@@ -73,6 +73,6 @@ type Class struct {
 func (c *Class) ToDesc() string {
 	var b strings.Builder
 	b.WriteString(fmt.Sprintf("教师：%s\\n", c.Teacher))
-	b.WriteString(fmt.Sprintf("时间安排：%s %s %s", TermDesc[c.Term], RepeatDesc[c.Repeat], c.RawDuration))
+	b.WriteString(fmt.Sprintf("时间安排：%s %s %s", SemesterDesc[c.Semester], RepeatDesc[c.Repeat], c.RawDuration))
 	return b.String()
 }
