@@ -1,13 +1,14 @@
 package test
 
 import (
-	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"grs-ical/pkg/ical"
 	"grs-ical/pkg/timetable"
 	"grs-ical/pkg/zjuapi"
 	"os"
 	"testing"
+	"time"
 )
 
 func TestFetchClass(t *testing.T) {
@@ -44,5 +45,26 @@ func TestFetchClass(t *testing.T) {
 		t.FailNow()
 	}
 
-	fmt.Printf("%+v", cl)
+	fm, err := time.ParseInLocation("20060102", "20220912", time.Local)
+	if err != nil {
+		log.Error().Msg(err.Error())
+		t.FailNow()
+	}
+	vEvents, err := timetable.ClassToVEvents(fm, cl, nil)
+	if err != nil {
+		log.Error().Msg(err.Error())
+		t.FailNow()
+	}
+	iCal := ical.VCalendar{
+		vEvents,
+	}
+
+	f, err := os.OpenFile("ical.ics", os.O_RDWR|os.O_CREATE, os.ModePerm)
+	if err != nil {
+		log.Error().Msg(err.Error())
+		t.FailNow()
+	}
+
+	f.WriteString(iCal.GetICS(""))
+	f.Close()
 }

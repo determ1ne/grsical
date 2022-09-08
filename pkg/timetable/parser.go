@@ -9,6 +9,7 @@ import (
 	"io"
 	"strconv"
 	"strings"
+	"unicode"
 )
 
 func GetTable(r io.Reader) (*html.Node, error) {
@@ -65,7 +66,14 @@ func parseClass(a *html.Node) (Class, error) {
 		log.Warn().Msgf("unsupported repeat pattern: %s", strings.TrimSpace(tr[1]))
 	}
 	// RawDuration
-	class.RawDuration = strings.TrimSpace(children[2].Data)
+	var b strings.Builder
+	b.Grow(len(children[2].Data))
+	for _, ch := range children[2].Data {
+		if !unicode.IsSpace(ch) {
+			b.WriteRune(ch)
+		}
+	}
+	class.RawDuration = b.String()
 	class.Teacher = strings.TrimSpace(children[3].Data)
 	class.Location = strings.TrimSpace(children[4].Data)
 	return class, nil
