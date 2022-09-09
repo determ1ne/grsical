@@ -3,6 +3,7 @@ package timetable
 import (
 	"fmt"
 	"strings"
+	"time"
 )
 
 type Repeat uint8
@@ -68,11 +69,16 @@ type Class struct {
 	Location    string
 	DayOfWeek   int    // 星期一为1
 	RawDuration string // 教务网的时间文本，作为冗余
+	date        time.Time
+	tweakDesc   string
 }
 
 func (c *Class) ToDesc() string {
 	var b strings.Builder
 	b.WriteString(fmt.Sprintf("教师：%s\\n", c.Teacher))
 	b.WriteString(fmt.Sprintf("时间安排：%s %s %s", SemesterDesc[c.Semester], RepeatDesc[c.Repeat], c.RawDuration))
+	if c.tweakDesc != "" {
+		b.WriteString(fmt.Sprintf("\\n%s", c.tweakDesc))
+	}
 	return b.String()
 }

@@ -16,8 +16,9 @@ const (
 )
 
 type Tweak struct {
-	MatchType MatchType              `json:"matchType"`
-	Type      TweakType              `json:"type"`
-	MatchRule map[string]interface{} `json:"rule"`
-	Op        map[string]interface{} `json:"op"`
+	MatchType   MatchType              `json:"matchType"`
+	Type        TweakType              `json:"type"`
+	MatchRule   map[string]interface{} `json:"rule"`
+	Op          map[string]interface{} `json:"op"`
+	Description string                 `json:"description"`
 }
