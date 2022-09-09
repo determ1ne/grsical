@@ -53,6 +53,7 @@ func CliMain(cmd *cobra.Command, args []string) error {
 
 	if userPassFile != "" {
 		upf, err := os.Open(userPassFile)
+		defer upf.Close()
 		if err != nil {
 			return err
 		}
@@ -69,40 +70,14 @@ func CliMain(cmd *cobra.Command, args []string) error {
 		return errors.New("no username or password set, exiting")
 	}
 
-	cf, err := os.Open(configFile)
-	if err != nil {
-		return err
-	}
-	cfd, err := io.ReadAll(cf)
-	if err != nil {
-		return err
-	}
-	var c common.Config
-	err = json.Unmarshal(cfd, &c)
-	if err != nil {
-		return err
-	}
-
-	tc := common.TweakConfig{}
-	if tweaksFile != "" {
-		tf, err := os.Open(tweaksFile)
-		if err != nil {
-			return err
-		}
-		tfd, err := io.ReadAll(tf)
-		if err != nil {
-			return err
-		}
-		err = json.Unmarshal(tfd, &tc)
-		if err != nil {
-			return err
-		}
-	}
+	c, err := common.GetConfig(configFile)
+	tc, err := common.GetTweakConfig(tweaksFile)
 
 	if _, err := os.Stat(outputFile); !errors.Is(err, os.ErrNotExist) && !forceWrite {
 		return errors.New("output file exists, exiting")
 	}
 	f, err := os.OpenFile(outputFile, os.O_CREATE|os.O_RDWR|os.O_TRUNC, os.ModePerm)
+	defer f.Close()
 	if err != nil {
 		return err
 	}
