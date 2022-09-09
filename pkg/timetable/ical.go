@@ -208,6 +208,11 @@ func ClassToVEvents(ctx context.Context, firstMonday time.Time, class *[]Class, 
 			}
 
 			for _, cc := range ccLst {
+				if cc.Repeat == SingleWeek && i%2 == 0 {
+					continue
+				} else if cc.Repeat == DoubleWeek && i%2 == 1 {
+					continue
+				}
 				if cc.date.IsZero() {
 					cc.date = d
 				}

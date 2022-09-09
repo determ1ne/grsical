@@ -10,11 +10,15 @@ type Repeat uint8
 
 const (
 	EveryWeek Repeat = iota
+	SingleWeek
+	DoubleWeek
 	// TODO: 更多种课程类型
 )
 
 var RepeatDesc = map[Repeat]string{
-	EveryWeek: "每周",
+	EveryWeek:  "每周",
+	SingleWeek: "单周",
+	DoubleWeek: "双周",
 }
 
 type Semester uint8

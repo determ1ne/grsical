@@ -29,6 +29,13 @@ func GetTable(r io.Reader) (*html.Node, error) {
 func parseClass(ctx context.Context, a *html.Node) (Class, error) {
 	class := Class{}
 	children := getValidChildren(a)
+	if len(children) == 6 {
+		// 单双周的字体被特殊标记，导致第二个元素分裂
+		if children[2].FirstChild != nil {
+			children[1].Data += children[2].FirstChild.Data
+			children = append(children[:2], children[3:]...)
+		}
+	}
 	if len(children) != 5 {
 		return class, fmt.Errorf("invalid children length")
 	}
@@ -61,6 +68,10 @@ func parseClass(ctx context.Context, a *html.Node) (Class, error) {
 	switch strings.TrimSpace(tr[1]) {
 	case "每周":
 		class.Repeat = EveryWeek
+	case "单周":
+		class.Repeat = SingleWeek
+	case "双周":
+		class.Repeat = DoubleWeek
 	default:
 		// 不是严重错误
 		class.Repeat = EveryWeek
@@ -171,8 +182,8 @@ func ParseTable(ctx context.Context, node *html.Node) (*[]Class, error) {
 			for _, a := range aChildren {
 				class, err := parseClass(ctx, a)
 				if err != nil {
-					log.Ctx(ctx).Error().Msgf("failed to parse class: %s", err.Error())
-					return nil, nil
+					log.Ctx(ctx).Warn().Msgf("failed to parse class: %s", err.Error())
+					continue
 				}
 				class.Duration.Starts = i
 				class.Duration.Ends = i + span - 1
