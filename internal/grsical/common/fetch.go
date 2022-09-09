@@ -19,6 +19,7 @@ func FetchToMemory(ctx context.Context, username, password string, config Config
 
 	var ve []ical.VEvent
 	for _, fc := range config.FetchConfig {
+		log.Ctx(ctx).Info().Msgf("fetching %d-%d", fc.Year, fc.Semester)
 		r, err := c.FetchTimetable(ctx, fc.Year, zjuapi.GrsSemester(fc.Semester))
 		if err != nil {
 			return "", err
@@ -29,6 +30,7 @@ func FetchToMemory(ctx context.Context, username, password string, config Config
 			return "", err
 		}
 
+		log.Ctx(ctx).Info().Msgf("parsing %d-%d", fc.Year, fc.Semester)
 		cl, err := timetable.ParseTable(ctx, table)
 		if err != nil {
 			return "", err
@@ -39,6 +41,7 @@ func FetchToMemory(ctx context.Context, username, password string, config Config
 			return "", err
 		}
 
+		log.Ctx(ctx).Info().Msgf("generating vevents %d-%d", fc.Year, fc.Semester)
 		vEvents, err := timetable.ClassToVEvents(ctx, fm, cl, &tweaks.Tweaks)
 		if err != nil {
 			return "", err
@@ -47,6 +50,7 @@ func FetchToMemory(ctx context.Context, username, password string, config Config
 		ve = append(ve, *vEvents...)
 	}
 
+	log.Ctx(ctx).Info().Msgf("generating iCalendar file")
 	iCal := ical.VCalendar{VEvents: &ve}
 	return iCal.GetICS(""), nil
 }

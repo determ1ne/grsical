@@ -14,8 +14,8 @@ import (
 )
 
 type pwFile struct {
-	username string `json:"username"`
-	password string `json:"password"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 var (
@@ -33,6 +33,7 @@ var (
 		SilenceErrors: true,
 		RunE:          CliMain,
 	}
+	version = "dirty"
 )
 
 func init() {
@@ -43,6 +44,8 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&tweaksFile, "tweak", "t", "", "tweaks file")
 	rootCmd.PersistentFlags().StringVarP(&outputFile, "output", "o", "grsical.ics", "output file")
 	rootCmd.PersistentFlags().BoolVarP(&forceWrite, "force", "f", false, "force write to target file")
+	rootCmd.Version = version
+	rootCmd.SetVersionTemplate("grsical build {{.Version}}\n")
 }
 
 func CliMain(cmd *cobra.Command, args []string) error {
@@ -59,8 +62,8 @@ func CliMain(cmd *cobra.Command, args []string) error {
 		}
 		var up pwFile
 		err = json.Unmarshal(upfc, &up)
-		userName = up.username
-		password = up.password
+		userName = up.Username
+		password = up.Password
 	}
 	if userName == "" && password == "" {
 		return errors.New("no username or password set, exiting")
