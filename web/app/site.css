@@ -1,0 +1,91 @@
+.wrapper {
+    display: block;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.navigation {
+    background: #f4f5f6;
+    border-bottom: .1rem solid #d1d1d1;
+    display: block;
+    height: 5.2rem;
+    left: 0;
+    max-width: 100%;
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 100%;
+    z-index: 2;
+}
+
+.navigation .container {
+    padding-bottom: 0;
+    padding-top: 0;
+}
+
+.wrapper .container {
+    max-width: 80rem;
+}
+
+.navigation .navigation-title {
+    display: inline;
+    font-size: 1.6rem;
+    line-height: 5.2rem;
+    padding: 0;
+    text-decoration: none;
+    color: #606c76;
+    font-family: 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    position: relative;
+}
+
+.navigation .title {
+    display: inline;
+    font-size: 1.6rem;
+    line-height: 5.2rem;
+    padding: 0;
+    text-decoration: none;
+    color: #606c76;
+    position: relative;
+}
+
+.octocat {
+    border: 0;
+    color: #f4f5f6;
+    fill: #9b4dca;
+    height: 5.2rem;
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 5.2rem;
+    z-index: 2;
+}
+
+.octocat .octocat-arm, .octocat .octocat-body {
+    fill: #f4f5f6;
+}
+
+.header {
+    padding-top: 5rem;
+    background-color: #f4f5f6;
+}
+
+.header .container {
+    border-top: 0;
+    padding-bottom: 7.5rem;
+    padding-top: 7.5rem;
+    position: relative;
+    text-align: center;
+}
+
+.wrapper .container {
+    max-width: 80rem;
+}
+
+input[type="text"],input[type="password"] {
+    background-color: white;
+}
+
+.bold {
+    font-weight: bold;
+}

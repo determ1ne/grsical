@@ -1,7 +1,9 @@
 package main
 
-import "grs-ical/internal/grsical/cli"
+import (
+	"grs-ical/internal/grsical"
+)
 
 func main() {
-	cli.Execute()
+	grsical.Execute()
 }

@@ -1,4 +1,4 @@
-package cli
+package grsical
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	"grs-ical/internal/grsical/common"
+	common2 "grs-ical/internal/common"
 	"io"
 	"os"
 )
@@ -70,8 +70,8 @@ func CliMain(cmd *cobra.Command, args []string) error {
 		return errors.New("no username or password set, exiting")
 	}
 
-	c, err := common.GetConfig(configFile)
-	tc, err := common.GetTweakConfig(tweaksFile)
+	c, err := common2.GetConfig(configFile)
+	tc, err := common2.GetTweakConfig(tweaksFile)
 
 	if _, err := os.Stat(outputFile); !errors.Is(err, os.ErrNotExist) && !forceWrite {
 		return errors.New("output file exists, exiting")
@@ -83,7 +83,7 @@ func CliMain(cmd *cobra.Command, args []string) error {
 	}
 	defer f.Close()
 
-	r, err := common.FetchToMemory(ctx, userName, password, c, tc)
+	r, err := common2.FetchToMemory(ctx, userName, password, c, tc)
 	if err != nil {
 		return err
 	}
