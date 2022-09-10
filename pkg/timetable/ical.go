@@ -224,7 +224,7 @@ func ClassToVEvents(ctx context.Context, firstMonday time.Time, class *[]Class, 
 					EndTime:     cc.date,
 				}
 				v.StartTime = cc.date.Add(time.Duration(ClassStart[cc.Duration.Starts]) * time.Minute)
-				v.EndTime = cc.date.Add(time.Duration(ClassStart[cc.Duration.Ends]) * time.Minute)
+				v.EndTime = cc.date.Add(time.Duration(ClassStart[cc.Duration.Ends]) * time.Minute).Add(time.Minute * 45)
 				vEvents = append(vEvents, v)
 			}
 		}
