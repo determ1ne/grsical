@@ -4,7 +4,9 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"errors"
+	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
+	"github.com/rs/zerolog/log"
 	cmn "grs-ical/internal/common"
 	"io"
 	"os"
@@ -29,6 +31,8 @@ var sd = SetupData{
 	Link:     "",
 }
 var gcm cipher.AEAD
+var rc *redis.Client
+var ipHeader string
 
 func ListenAndServe(address string) error {
 	EncKey = os.Getenv("GRSICALSRV_ENCKEY")
@@ -55,6 +59,21 @@ func ListenAndServe(address string) error {
 	tweaksFile := os.Getenv("GRSICALSRV_TWEAKS")
 	if tweaksFile == "" {
 		return errors.New("config file not set")
+	}
+	ipHeader = os.Getenv("GRSICALSRV_IP_HEADER")
+	if ipHeader != "" {
+		log.Info().Msgf("grsicalsrv will get header from %s", ipHeader)
+	}
+	redisAddr := os.Getenv("GRSICALSRV_REDIS_ADDR")
+	redisPass := os.Getenv("GRSICALSRV_REDIS_PASS")
+	if redisAddr == "" || redisPass == "" {
+		log.Warn().Msg("redis not set, rate limit won't work")
+	} else {
+		rc = redis.NewClient(&redis.Options{
+			Addr:     redisAddr,
+			Password: redisPass,
+			DB:       0,
+		})
 	}
 	// read template
 	f, err := os.Open("./web/template/setup.html")
@@ -92,7 +111,9 @@ func ListenAndServe(address string) error {
 }
 
 func setRoutes(app *fiber.App) {
+	app.Use(RateLimiterM)
 	app.Static("/", "./web/app")
 	app.Post("/", SetupPage)
 	app.Get("/ical", FetchCal)
+	app.Get("/ping", PingEp)
 }
