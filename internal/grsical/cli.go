@@ -4,13 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io"
+	"os"
+
+	common2 "grs-ical/internal/common"
+
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	common2 "grs-ical/internal/common"
-	"io"
-	"os"
 )
 
 type pwFile struct {
@@ -67,7 +69,7 @@ func CliMain(cmd *cobra.Command, args []string) error {
 		userName = up.Username
 		password = up.Password
 	}
-	if userName == "" && password == "" {
+	if userName == "" || password == "" {
 		return errors.New("no username or password set, exiting")
 	}
 
@@ -82,7 +84,6 @@ func CliMain(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
 
 	r, err := common2.FetchToMemory(ctx, userName, password, c, tc)
 	if err != nil {

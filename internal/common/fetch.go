@@ -2,13 +2,15 @@ package common
 
 import (
 	"context"
-	"github.com/rs/zerolog/log"
-	"golang.org/x/net/html"
+	"strings"
+	"time"
+
 	"grs-ical/pkg/ical"
 	"grs-ical/pkg/timetable"
 	"grs-ical/pkg/zjuapi"
-	"strings"
-	"time"
+
+	"github.com/rs/zerolog/log"
+	"golang.org/x/net/html"
 )
 
 func FetchToMemory(ctx context.Context, username, password string, config Config, tweaks TweakConfig) (string, error) {
@@ -85,6 +87,6 @@ func FetchToMemory(ctx context.Context, username, password string, config Config
 	}
 
 	log.Ctx(ctx).Info().Msgf("generating iCalendar file")
-	iCal := ical.VCalendar{VEvents: &ve}
+	iCal := ical.VCalendar{VEvents: ve}
 	return iCal.GetICS(""), nil
 }
