@@ -3,9 +3,11 @@ package common
 import (
 	"context"
 	"github.com/rs/zerolog/log"
+	"golang.org/x/net/html"
 	"grs-ical/pkg/ical"
 	"grs-ical/pkg/timetable"
 	"grs-ical/pkg/zjuapi"
+	"strings"
 	"time"
 )
 
@@ -33,7 +35,10 @@ func FetchToMemory(ctx context.Context, username, password string, config Config
 		log.Ctx(ctx).Info().Msgf("parsing %d-%d", fc.Year, fc.Semester)
 		cl, err := timetable.ParseTable(ctx, table)
 		if err != nil {
-			return "", err
+			// dump table
+			var b strings.Builder
+			_ = html.Render(&b, table)
+			return b.String(), err
 		}
 
 		fm, err := time.ParseInLocation("20060102", fc.FirstDay, time.Local)

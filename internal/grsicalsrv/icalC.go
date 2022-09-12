@@ -1,9 +1,9 @@
 package grsicalsrv
 
 import (
-	"context"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
@@ -45,10 +45,15 @@ func FetchCal(ctx *fiber.Ctx) error {
 		}
 	}
 
-	c := log.With().Str("u", string(un)).Str("r", uuid.NewString()).Logger().WithContext(context.Background())
+	reqId := uuid.NewString()
+	c := log.With().Str("u", string(un)).Str("r", reqId).Logger().WithContext(ctx.UserContext())
 	r, err := common2.FetchToMemory(c, string(un), string(pw), cfg, tweak)
 	if err != nil {
-		return ctx.SendString(err.Error())
+		if r != "" && rc != nil {
+			tableComp, _ := common2.Lz4Encode(r)
+			_ = rc.Set(c, fmt.Sprintf("dump%s", reqId), tableComp, common2.DurationOneDay*7)
+		}
+		return ctx.SendString(fmt.Sprintf("%s\r\nrequest id=%s", err.Error(), reqId))
 	}
 
 	ctx.Set("Content-Type", "text/calendar")
