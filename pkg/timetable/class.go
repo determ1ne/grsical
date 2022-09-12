@@ -79,12 +79,37 @@ type Class struct {
 	tweakDesc   string
 }
 
+type Exam struct {
+	Name      string
+	Semester  string
+	ID        string
+	Region    string
+	StartTime time.Time
+	EndTime   time.Time
+	Location  string
+	SeatNo    string
+	Remark    string
+}
+
 func (c *Class) ToDesc() string {
 	var b strings.Builder
 	b.WriteString(fmt.Sprintf("教师：%s\\n", c.Teacher))
 	b.WriteString(fmt.Sprintf("时间安排：%s %s %s", SemesterDesc[c.Semester], RepeatDesc[c.Repeat], c.RawDuration))
 	if c.tweakDesc != "" {
 		b.WriteString(fmt.Sprintf("\\n%s", c.tweakDesc))
+	}
+	return b.String()
+}
+
+func (exam *Exam) ToDesc() string {
+	var b strings.Builder
+	b.WriteString(fmt.Sprintf("%s %s学期", exam.Name, exam.Semester))
+	b.WriteString(fmt.Sprintf("课程号：%s", exam.ID))
+	if exam.SeatNo != "" {
+		b.WriteString(fmt.Sprintf("座位号: %s\\n", exam.SeatNo))
+	}
+	if exam.Remark != "" {
+		b.WriteString(fmt.Sprintf("备注: %s\\n", exam.Remark))
 	}
 	return b.String()
 }

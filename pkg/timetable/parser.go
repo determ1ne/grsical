@@ -2,6 +2,7 @@ package timetable
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/rs/zerolog/log"
@@ -10,6 +11,7 @@ import (
 	"io"
 	"strconv"
 	"strings"
+	"time"
 	"unicode"
 )
 
@@ -20,6 +22,19 @@ func GetTable(r io.Reader) (*html.Node, error) {
 	}
 
 	table := doc.Find(".table-course").Find("tbody")
+	if len(table.Nodes) == 0 {
+		return nil, fmt.Errorf("can not find table")
+	}
+	return table.Nodes[0], nil
+}
+
+func GetExamTable(r io.Reader) (*html.Node, error) {
+	doc, err := goquery.NewDocumentFromReader(r)
+	if err != nil {
+		return nil, err
+	}
+
+	table := doc.Find("table").Find("tbody")
 	if len(table.Nodes) == 0 {
 		return nil, fmt.Errorf("can not find table")
 	}
@@ -194,4 +209,75 @@ func ParseTable(ctx context.Context, node *html.Node) (*[]Class, error) {
 	}
 
 	return &classes, nil
+}
+
+func getFirstChildData(node *html.Node, def string) string {
+	if node.FirstChild != nil && node.FirstChild.Data != "" {
+		return node.FirstChild.Data
+	} else {
+		return def
+	}
+}
+
+func ParseExamTable(ctx context.Context, node *html.Node) (*[]Exam, error) {
+	var err error
+	trs := goquery.NewDocumentFromNode(node).Find("tr").Nodes
+	var exams []Exam
+	for _, tr := range trs {
+		tds := goquery.NewDocumentFromNode(tr).Find("td").Nodes
+		l := len(tds)
+		if l > 9 {
+			err = errors.New("long node")
+			l = 9
+		} else if l < 6 {
+			err = errors.New("short node")
+			continue
+		}
+
+		exam := Exam{}
+		valid := true
+	FOR:
+		for i := 0; i < l; i++ {
+			switch i {
+			case 0:
+				exam.Semester = getFirstChildData(tds[i], "未知")
+			case 1:
+				exam.ID = getFirstChildData(tds[i], "未知课号")
+			case 2:
+				exam.Name = getFirstChildData(tds[i], "未知课程")
+			case 3:
+				exam.Region = getFirstChildData(tds[i], "")
+			case 4:
+				t2 := strings.Split(getFirstChildData(tds[5], ""), "->")
+				if len(t2) < 2 {
+					err = errors.New("malformed time 1")
+					valid = false
+					break FOR
+				}
+				d := getFirstChildData(tds[4], "")
+				t0 := fmt.Sprintf("%s %s", d, t2[0])
+				t1 := fmt.Sprintf("%s %s", d, t2[1])
+				exam.StartTime, err = time.ParseInLocation("2006-01-02 15:04", t0, CSTLocation)
+				if err != nil {
+					valid = false
+					break FOR
+				}
+				exam.EndTime, err = time.ParseInLocation("2006-01-02 15:04", t1, CSTLocation)
+				if err != nil {
+					valid = false
+					break FOR
+				}
+			case 6:
+				exam.Location = getFirstChildData(tds[i], "未知地点")
+			case 7:
+				exam.SeatNo = getFirstChildData(tds[i], "")
+			case 8:
+				exam.Remark = getFirstChildData(tds[i], "")
+			}
+		}
+		if valid {
+			exams = append(exams, exam)
+		}
+	}
+	return &exams, err
 }

@@ -1,0 +1,425 @@
+<!--TranserFile-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-cn" xml:lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>浙江大学研究生信息系统</title>
+<link rel="shortcut icon" href="http://grs.zju.edu.cn/resource/img/favicon.ico" type="image/x-icon"/>
+<link href="http://grs.zju.edu.cn/resource/css/base.css" rel="stylesheet" type="text/css">
+<link href="http://grs.zju.edu.cn/resource/css/common.css" rel="stylesheet" type="text/css">
+<link href="http://grs.zju.edu.cn/resource/css/page_stu_cultivation.css" rel="stylesheet" type="text/css">
+<link href="http://grs.zju.edu.cn/resource/css/page_stu.css" rel="stylesheet" type="text/css"/>
+
+<script type="text/javascript" src="/py/res/js/lib/jquery-1.7.1.js"></script>
+<script type="text/javascript" src="/py/res/js/lib/jquery.clazz.js"></script>
+<script type="text/javascript" src="/py/res/js/common.js"></script>
+<script type="text/javascript" src="/py/res/js/universal.js"></script>
+<script type="text/javascript" src="http://grs.zju.edu.cn/resource/js/lib/tableOrder.js"></script>
+<script type="text/javascript" src="/py/res/js/page.js"></script>
+<script type="text/javascript" src="/py/res/js/lib/bootstrap.js"></script>
+<script type="text/javascript" src="/py/res/js/stulayout.js"></script>
+<script type="text/javascript" src="/py/res/js/lib/lhgdialog/lhgdialog.min.js"></script>  <!-- 弹出窗口控件 -->
+<script type="text/javascript" src="/py/res/js/lib/mopTip-2.2.js"></script>  <!-- 提示控件 -->
+<script type="text/javascript" src="/py/res/js/lib/custom-form-elements.js"></script>
+<!-- 日期控件部分 start -->
+ <link href="http://grs.zju.edu.cn/resource/js/lib/date/jquery.datepick.css" rel="stylesheet" type="text/css"> 
+<script type="text/javascript" src="http://grs.zju.edu.cn/resource/js/lib/date/jquery.datepick.js"></script>
+<script type="text/javascript" src="http://grs.zju.edu.cn/resource/js/lib/date/jquery.datepick-zh-CN.js"></script>
+<!-- 日期控件部分  end -->
+<!-- select box start -->
+ <link href="http://grs.zju.edu.cn/resource/js/lib/selectbox/chosen.css" rel="stylesheet" type="text/css"> 
+<script type="text/javascript" src="http://grs.zju.edu.cn/resource/js/lib/selectbox/chosen.jquery.js"></script>
+<!-- select box  end -->
+
+<script src="http://grs.zju.edu.cn/resource/js/layout.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function() {
+	InitParams.url = "/page/student/grksap.htm";
+	var page = new LayoutPage(InitParams);
+});
+</script>
+<script src="http://grs.zju.edu.cn/resource/js/ie.js" type="text/javascript"></script>
+<script type="text/javascript">
+   testIe("http://grs.zju.edu.cn/resource");
+</script>
+
+<style>
+.locale-text{
+	float: right;
+    display: inline;
+    text-align: right;
+    overflow: hidden;
+    line-height: 38px;
+    padding-top: 7px;
+    color: #fff;
+    font-size: 13px;
+    margin-right:10px;
+}
+.grs-header-wrap {
+	    width: 1200px;
+}
+</style>
+<script type="text/javascript" src="/py/res/i18n/jquery.i18n.properties.js"></script>
+<script type="text/javascript">
+//加载properties 文件
+(function loadProperties(){
+	 jQuery.i18n.properties({
+		 name:"alert",
+		 path:"/py/alert/",
+		 mode:"both",
+	     language:"zh_CN",
+	     async:false,
+		 callback:function(){
+		 }
+	 });
+})()
+$(document).ready(function(){
+	$(".changeLocale").click(function(){
+		var locale = $(this).attr("value");
+		$.post("?pageAction=changeLocale", {"locale":locale}, function(){
+			let href=window.location.href;
+			//主要 oninit 中获取参数 去掉
+			if(href.indexOf("locale")!=-1){
+		 		window.location.href=href.substring(0,href.indexOf("?"))
+			}else{
+				window.location.href=href;
+			}		
+		},"json");
+	});
+	
+});
+</script>
+</head>
+
+ <div class="grs-header">
+  <div class="grs-header-wrap"> 
+				<div class="              ml200  leaf tabDiv" id="tab0"><a href="/xssj/page/student/mySjjl.htm">实践</a></div>
+				<div class="      current     leaf tabDiv" id="tab1"><a href="/py/page/student/xslcsm.htm">培养</a></div>
+				<div class="       leaf tabDiv" id="tab2"><a href="/gl/page/student/studentBaseOne.htm">学籍</a></div>
+				<div class="        leaf tabDiv" id="tab3"><a href="/degree/page/xwsq/stu_xwsq_apptime.htm">学位</a></div>
+				<div class="      leaf tabDiv" id="tab4"><a href="/research/student/queryalljournal.htm">科研</a></div>
+				<div class="            leaf tabDiv" id="tab5"><a href="/gangzhu/student/logQuery.htm">奖助</a></div>
+				<div class="           leaf tabDiv" id="tab6"><a href="/cg/page/student/tzgg.htm">出国境</a></div>
+			<a class="user" href="?pageAction=Logout">注销</a>
+	<a class="user" href="?pageAction=changeRole">【学生】</a>
+	<a class="user name" href="/allogene/page/home.htm"></a>
+	<p class="locale-text"><a class="changeLocale" value="zh_CN" style="color:white">Chinese|</a><a class="changeLocale" value="en" style="color:white">English</a></p>
+	
+  </div>
+</div>
+<div class="grs-nav">
+  <div class="grs-nav-wrap"> 
+  	  	  	<ul class="tab0 tabUl  hide ">
+		<li class="ml25">
+		      	      		<a class="  " href="/xssj/page/student/mySjjl.htm">
+      		      			我的实践      		      		</a>
+      	      	      		<a class=" ml30  " href="/xssj/page/student/studentGrxxPage.htm">
+      		      			个人信息      		      		</a>
+      	      	      		<a class=" ml30  " href="/xssj/page/student/studentCjwtPage.htm">
+      		      			常见问题      		      		</a>
+      	      	      		<a class=" ml30  " href="/xssj/page/student/postManage.htm">
+      		      			社会实践岗位库      		      		</a>
+      	      	      		<a class=" ml30  " href="/xssj/page/student/otherApplicationManage.htm">
+      		      			其他形式社会实践      		      		</a>
+      	      	      		<a class=" ml30  " href="/xssj/page/student/applicationManage.htm">
+      		      			我的选岗      		      		</a>
+      	      	      		<a class=" ml30  " href="/xssj/page/student/studentKtbgPage.htm">
+      		      			开题报告管理      		      		</a>
+      	      	      		<a class=" ml30  " href="/xssj/page/student/studentZqjcPage.htm">
+      		      			中期检查管理      		      		</a>
+      	      	      		<a class=" ml30  " href="/xssj/page/student/studentSjzjPage.htm">
+      		      			实践总结管理      		      		</a>
+      	      	      		<a class=" ml30  " href="/xssj/page/student/studentQjsqQueryPage.htm">
+      		      			我的请假      		      		</a>
+      	      	      		<a class=" ml30  " href="/xssj/page/student/exemptionManage.htm">
+      		      			我的免修      		      		</a>
+      	      	      		<a class=" ml30  " href="/xssj/page/student/deferredManage.htm">
+      		      			我的缓修      		      		</a>
+      	      	      	</li>
+    </ul>
+      	  	<ul class="tab1 tabUl ">
+		<li class="ml25">
+		      	      		<a class="  " href="/py/page/student/xslcsm.htm">
+      		      			培养总则      		      		</a>
+      	      	      		<a class=" ml30  " href="/py/page/student/xzgrpyfafx.htm">
+      		      			选择方向      		      		</a>
+      	      	      		<a class=" ml30  " href="/py/page/student/grxxjhzdgz.htm">
+      		      			个人学习计划      		      		</a>
+      	      	      		<a class=" ml30  " href="/py/page/student/grkcgl.htm">
+      		      			我的课程      		      		</a>
+      	      	      		<a class=" ml30  " href="/py/page/student/grkcb.htm">
+      		      			我的课表      		      		</a>
+      	      	      		<a class=" ml30   current " href="/py/page/student/grksap.htm">
+      		      			我的考试      		      		</a>
+      	      	      		<a class=" ml30  " href="/procedure/student/readingreport.htm">
+      		      			培养过程      		      		</a>
+      	      	      		<a class=" ml30  " href="/py/page/student/lnsjCxdc.htm">
+      		      			全校开课情况查询      		      		</a>
+      	      	      	</li>
+    </ul>
+      	  	<ul class="tab2 tabUl  hide ">
+		<li class="ml25">
+		      	      		<a class="  " href="/gl/page/student/studentBaseOne.htm">
+      		      			我的学籍信息      		      		</a>
+      	      	      		<a class=" ml30  " href="/gl/page/student/studentException.htm">
+      		      			学籍异动申请      		      		</a>
+      	      	      		<a class=" ml30  " href="/gl/page/student/exceptionPrint.htm">
+      		      			学籍异动打印      		      		</a>
+      	      	      		<a class=" ml30  " href="/gl/page/student/studentEnrollment.htm">
+      		      			新生登记表      		      		</a>
+      	      	      		<a class=" ml30  " href="/gl/page/student/studentFilePrint.htm">
+      		      			证明下载      		      		</a>
+      	      	      	</li>
+    </ul>
+      	  	<ul class="tab3 tabUl  hide ">
+		<li class="ml25">
+		      	      		<a class="  " href="/degree/page/xwsq/stu_xwsq_apptime.htm">
+      		      			申请流程      		      		</a>
+      	      	      		<a class=" ml30  " href="/degree/page/xwsq/stu_xwsq_filedownload.htm">
+      		      			文档下载      		      		</a>
+      	      	      		<a class=" ml30  " href="/degree/page/xwsq/stu_xwsq_result.htm">
+      		      			申请状态查询      		      		</a>
+      	      	      		<a class=" ml30  " href="/degree/page/xwsq/stu_degreedata.htm">
+      		      			上报信息录入      		      		</a>
+      	      	      		<a class=" ml30  " href="/degree/page/xwsq/stu_xwsq_apply.htm">
+      		      			提交学位论文      		      		</a>
+      	      	      		<a class=" ml30  " href="/degree/page/dbgl/stu_dbgl_replytrim.htm">
+      		      			答辩准备信息      		      		</a>
+      	      	      	</li>
+    </ul>
+      	  	<ul class="tab4 tabUl  hide ">
+		<li class="ml25">
+		      	      		<a class="  " href="/research/student/queryalljournal.htm">
+      		      			研究生科研成果汇总      		      		</a>
+      	      	      		<a class=" ml30  " href="/research/student/modifyjournal.htm">
+      		      			科研成果维护      		      		</a>
+      	      	      		<a class=" ml30  " href="/research/student/addjournal.htm">
+      		      			科研成果录入      		      		</a>
+      	      	      		<a class=" ml30  " href="/research/student/queryjournal.htm">
+      		      			科研成果查询      		      		</a>
+      	      	      	</li>
+    </ul>
+      	  	<ul class="tab5 tabUl  hide ">
+		<li class="ml25">
+		      	      		<a class="  " href="/gangzhu/student/logQuery.htm">
+      		      			发放记录查询      		      		</a>
+      	      	      		<a class=" ml30  " href="/gangzhu/student/workQuery.htm">
+      		      			助研助教金查询      		      		</a>
+      	      	      		<a class=" ml30  " href="/gangzhu/student/alterationQuery.htm">
+      		      			岗助金异动      		      		</a>
+      	      	      		<a class=" ml30  " href="/dk/page/student/xssqdlr.htm">
+      		      			贷款申请      		      		</a>
+      	      	      		<a class=" ml30  " href="/dk/page/student/xsdkcx.htm">
+      		      			贷款查询      		      		</a>
+      	      	      		<a class=" ml30  " href="/jxj/page/student/jwdsqb1.htm">
+      		      			奖学金      		      		</a>
+      	      	      		<a class=" ml30  " href="/jxj/page/student/zwdsqb1.htm">
+      		      			助学金      		      		</a>
+      	      	      		<a class=" ml30  " href="/jxj/page/student/charityStu.htm">
+      		      			困难生认定      		      		</a>
+      	      	      		<a class=" ml30  " href="/jxj/page/student/xywdsqb1.htm">
+      		      			校级优秀毕业生      		      		</a>
+      	      	      		<a class=" ml30  " href="/jxj/page/student/sywdsqb1.htm">
+      		      			省级优秀毕业生      		      		</a>
+      	      	      	</li>
+    </ul>
+      	  	<ul class="tab6 tabUl  hide ">
+		<li class="ml25">
+		      	      		<a class="  " href="/cg/page/student/tzgg.htm">
+      		      			通知公告      		      		</a>
+      	      	      		<a class=" ml30  " href="/cg/page/student/ygcgp.htm">
+      		      			因公出国境申请      		      		</a>
+      	      	      		<a class=" ml30  " href="/cg/page/student/hyzzp.htm">
+      		      			短期项目资助申请      		      		</a>
+      	      	      		<a class=" ml30  " href="/cg/page/student/dwjlxmp.htm">
+      		      			对外交流项目申请      		      		</a>
+      	      	      		<a class=" ml30  " href="/cg/page/student/xsxxjh.htm">
+      		      			学术新星计划      		      		</a>
+      	      	      		<a class=" ml30  " href="/cg/page/student/gpyjs.htm">
+      		      			公派研究生申请      		      		</a>
+      	      	      		<a class=" ml30  " href="/cg/page/student/ztcx.htm">
+      		      			状态查询      		      		</a>
+      	      	      		<a class=" ml30  " href="/cg/page/student/hgzlsc.htm">
+      		      			回国资料上传      		      		</a>
+      	      	      		<a class=" ml30  " href="/cg/page/student/gwztbg.htm">
+      		      			国境外状态变更      		      		</a>
+      	      	      	</li>
+    </ul>
+      	  </div>
+</div>
+
+<div class="layout_main br5"> 
+  <!-- content -->
+  <div class="setting_module pt10">
+    <div class="layout_right">      
+		
+  		<!--TranserFile-->
+<div class="setup_main">
+	<div class="apply-content">
+		<div class="tac mt20">
+		<h3 class="studenttitle">
+		2022-2023学年 秋冬学期 考试安排
+		</h3>
+		</div>
+		<div class="clear"></div>
+		<form class="form-horizontal" id="form">
+			<fieldset>
+			<div class="control-group ">
+			<ul class="mt10">
+				<li>
+					<p class="fr">
+					<select name="xj" id="xj" class="chzn-select  w70  change">
+						<option value="-1" selected="selected">所有</option>
+												<option value="16"  selected="selected" >秋冬</option>
+												<option value="15" >春夏</option>
+											</select>
+					</p>
+					<span class="fr mr10">学期：</span>
+					<p class="fr mr30">
+					<select name="xn" id="xn" class="chzn-select w120 mr30 change">     
+												<option value="2003" >2003-2004</option>
+												<option value="2004" >2004-2005</option>
+												<option value="2005" >2005-2006</option>
+												<option value="2006" >2006-2007</option>
+												<option value="2007" >2007-2008</option>
+												<option value="2008" >2008-2009</option>
+												<option value="2009" >2009-2010</option>
+												<option value="2010" >2010-2011</option>
+												<option value="2011" >2011-2012</option>
+												<option value="2012" >2012-2013</option>
+												<option value="2013" >2013-2014</option>
+												<option value="2014" >2014-2015</option>
+												<option value="2015" >2015-2016</option>
+												<option value="2016" >2016-2017</option>
+												<option value="2017" >2017-2018</option>
+												<option value="2018" >2018-2019</option>
+												<option value="2019" >2019-2020</option>
+												<option value="2020" >2020-2021</option>
+												<option value="2021" >2021-2022</option>
+												<option value="2022"  selected="selected" >2022-2023</option>
+												<option value="2023" >2023-2024</option>
+											</select>
+					</p>
+					<span class="fr mr10">学年：</span>   		        
+				</li>
+			</ul>
+			</div>
+		</fieldset>
+		</form>
+		
+				<table class="table table-bordered table-striped">
+			<thead>
+				<tr>
+					<th scope="col" width="60px">学季</th>
+					<th scope="col" width="50px">开课号</th>
+					<th scope="col" width="100px">课程名称</th>
+					<th scope="col" width="60px">校区</th>
+					<th scope="col" width="60px">考试日期</th>
+					<th scope="col" width="60px">考试时间</th>
+					<th scope="col" width="100px">考试地点</th>
+					<th scope="col" width="30px">座位号</th>
+					<th scope="col" width="60px">备注</th>
+				</tr>
+			</thead>
+			<tbody>
+										<tr>
+										<td>秋</td>
+					<td>1023029001</td>
+					<td>电力系统规划</td>
+					<td>玉泉</td>
+					<td>2022-11-06</td>
+					<td>18:30->20:30</td>
+					<td>第7教学楼 - 玉泉教7-406(录播.4)</td>
+					<td></td>
+					<td></td>
+				</tr>
+													<tr>
+										<td>秋冬</td>
+					<td>1021023001</td>
+					<td>现代控制理论</td>
+					<td>玉泉</td>
+					<td>2023-01-04</td>
+					<td>08:00->10:00</td>
+					<td>第7教学楼 - 玉泉教7-106(录播.4)</td>
+					<td></td>
+					<td></td>
+				</tr>
+													<tr>
+										<td>秋</td>
+					<td>1023026001</td>
+					<td>电力系统运行与控制</td>
+					<td>玉泉</td>
+					<td>2022-11-06</td>
+					<td>10:30->12:30</td>
+					<td>第7教学楼 - 玉泉教7-406(录播.4)</td>
+					<td></td>
+					<td></td>
+				</tr>
+													<tr>
+										<td>冬</td>
+					<td>1011063001</td>
+					<td>非线性电力系统分析与控制</td>
+					<td>玉泉</td>
+					<td>2023-01-02</td>
+					<td>14:00->16:00</td>
+					<td>第7教学楼 - 玉泉教7-406(录播.4)</td>
+					<td></td>
+					<td></td>
+				</tr>
+													<tr>
+										<td>秋</td>
+					<td>1021024001</td>
+					<td>电力市场与电力经济</td>
+					<td>玉泉</td>
+					<td>2022-11-05</td>
+					<td>18:30->20:30</td>
+					<td>第7教学楼 - 玉泉教7-406(录播.4)</td>
+					<td></td>
+					<td></td>
+				</tr>
+									</tbody>
+		</table>
+				
+			</div>
+</div>
+<div class="clear"></div>
+
+<script src="/py/res/js/ksgl/jskccx.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function() {
+	InitParams.url = "/py/page/student/grksap.htm";
+	var jskccxPage = new JskccxPage(InitParams);
+});
+</script>  		
+  	</div>		
+  </div>
+  <div class="clear"></div>
+  <!-- content end --> 
+</div>
+  		
+<div class="grs-footer">
+	<div class="grs-footer-wrap">
+		<p class="footer-link">
+					<a href="http://www.zju.edu.cn" target="_blank">
+					      			浙江大学	      					</a>
+					<a href="http://grs.zju.edu.cn" target="_blank">
+					      			研究生院	      					</a>
+					<a href="http://zupo.zju.edu.cn" target="_blank">
+					      			浙大办公网	      					</a>
+					<a href="mailto:yjsy-info@zju.edu.cn?subject=浙江大学研究生信息系统意见反馈" target="_blank">
+					      			意见反馈	      					</a>
+					<a href="http://grs.zju.edu.cn/allogene" target="_blank">
+					      			我的首页	      					</a>
+				</p>
+	</div>
+	<div class="grs-footer-wrap">
+		<p class="footer-info">版权所有&nbsp;&copy;&nbsp;浙江大学研究生院</p>
+	</div>
+</div>
+<script type="text/javascript">
+$(".chzn-select").chosen(); $(".chzn-select-deselect").chosen({allow_single_deselect:true}); 
+</script>
+<input type="hidden" value="">
+</html>

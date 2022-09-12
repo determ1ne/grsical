@@ -20,8 +20,10 @@ func FetchToMemory(ctx context.Context, username, password string, config Config
 	}
 
 	var ve []ical.VEvent
+	year := map[int]struct{}{}
 	for _, fc := range config.FetchConfig {
 		log.Ctx(ctx).Info().Msgf("fetching %d-%d", fc.Year, fc.Semester)
+		year[fc.Year] = struct{}{}
 		r, err := c.FetchTimetable(ctx, fc.Year, zjuapi.GrsSemester(fc.Semester))
 		if err != nil {
 			return "", err
@@ -41,7 +43,7 @@ func FetchToMemory(ctx context.Context, username, password string, config Config
 			return b.String(), err
 		}
 
-		fm, err := time.ParseInLocation("20060102", fc.FirstDay, time.Local)
+		fm, err := time.ParseInLocation("20060102", fc.FirstDay, CSTLocation)
 		if err != nil {
 			return "", err
 		}
@@ -53,6 +55,33 @@ func FetchToMemory(ctx context.Context, username, password string, config Config
 		}
 
 		ve = append(ve, *vEvents...)
+	}
+
+	// fetch exams
+	for y, _ := range year {
+		log.Ctx(ctx).Info().Msgf("fetching exam info %d", y)
+		r, err := c.FetchExamTable(ctx, y, zjuapi.AllSemester)
+		if err != nil {
+			log.Ctx(ctx).Error().Msgf("failed to fetch exam table, error: %s", err.Error())
+			continue
+		}
+		table, err := timetable.GetExamTable(r)
+		if err != nil {
+			log.Ctx(ctx).Error().Msgf("failed to get exam table, error: %s", err.Error())
+			continue
+		}
+		log.Ctx(ctx).Info().Msgf("parsing exam info %d", y)
+		exams, err := timetable.ParseExamTable(ctx, table)
+		if err != nil {
+			log.Ctx(ctx).Error().Msgf("failed to parse exam table, error: %s", err.Error())
+			continue
+		}
+		vEvents, err := timetable.ExamToVEvents(ctx, exams)
+		ve = append(ve, *vEvents...)
+		if err != nil {
+			log.Ctx(ctx).Error().Msgf("failed to generate exam ical, error: %s", err.Error())
+			continue
+		}
 	}
 
 	log.Ctx(ctx).Info().Msgf("generating iCalendar file")

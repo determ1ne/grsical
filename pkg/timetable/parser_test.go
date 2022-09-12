@@ -8,6 +8,7 @@ import (
 	"os"
 	"reflect"
 	"testing"
+	"time"
 )
 
 var classList = &[]Class{
@@ -37,6 +38,18 @@ var conflictClassList = &[]Class{
 	{Name: "运动素质课", Semester: Autumn, Repeat: EveryWeek, Duration: ClassDuration{Starts: 9, Ends: 10}, Teacher: "潘雯雯", Location: "玉泉教7-402(录播.4)", DayOfWeek: 3, RawDuration: "第九节--第十节"},
 	{Name: "中国马克思主义与当代", Semester: Autumn, Repeat: EveryWeek, Duration: ClassDuration{Starts: 11, Ends: 14}, Teacher: "董扣艳", Location: "玉泉教7-406(录播.4)", DayOfWeek: 2, RawDuration: "第十一节--第十四节"},
 	{Name: "中国马克思主义与当代", Semester: Autumn, Repeat: EveryWeek, Duration: ClassDuration{Starts: 11, Ends: 14}, Teacher: "桑建泉", Location: "玉泉教7-406(录播.4)", DayOfWeek: 3, RawDuration: "第十一节--第十四节"}}
+
+var examList *[]Exam
+
+func init() {
+	examList = &[]Exam{
+		{Name: "电力系统规划", Semester: "秋", ID: "1023029001", Region: "玉泉", StartTime: time.Date(2022, time.November, 6, 18, 30, 0, 0, CSTLocation), EndTime: time.Date(2022, time.November, 6, 20, 30, 0, 0, CSTLocation), Location: "第7教学楼 - 玉泉教7-406(录播.4)", SeatNo: "", Remark: ""},
+		{Name: "现代控制理论", Semester: "秋冬", ID: "1021023001", Region: "玉泉", StartTime: time.Date(2023, time.January, 4, 8, 0, 0, 0, CSTLocation), EndTime: time.Date(2023, time.January, 4, 10, 0, 0, 0, CSTLocation), Location: "第7教学楼 - 玉泉教7-106(录播.4)", SeatNo: "", Remark: ""},
+		{Name: "电力系统运行与控制", Semester: "秋", ID: "1023026001", Region: "玉泉", StartTime: time.Date(2022, time.November, 6, 10, 30, 0, 0, CSTLocation), EndTime: time.Date(2022, time.November, 6, 12, 30, 0, 0, CSTLocation), Location: "第7教学楼 - 玉泉教7-406(录播.4)", SeatNo: "", Remark: ""},
+		{Name: "非线性电力系统分析与控制", Semester: "冬", ID: "1011063001", Region: "玉泉", StartTime: time.Date(2023, time.January, 2, 14, 0, 0, 0, CSTLocation), EndTime: time.Date(2023, time.January, 2, 16, 0, 0, 0, CSTLocation), Location: "第7教学楼 - 玉泉教7-406(录播.4)", SeatNo: "", Remark: ""},
+		{Name: "电力市场与电力经济", Semester: "秋", ID: "1021024001", Region: "玉泉", StartTime: time.Date(2022, time.November, 5, 18, 30, 0, 0, CSTLocation), EndTime: time.Date(2022, time.November, 5, 20, 30, 0, 0, CSTLocation), Location: "第7教学楼 - 玉泉教7-406(录播.4)", SeatNo: "", Remark: ""}}
+
+}
 
 func testParser(t *testing.T, fileName string, classList *[]Class) {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
@@ -73,4 +86,33 @@ func TestNormalParser(t *testing.T) {
 
 func TestConflictParser(t *testing.T) {
 	testParser(t, "./test_assets/timetable-conflict.html", conflictClassList)
+}
+
+func TestExamParser(t *testing.T) {
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	ctx := context.Background()
+
+	f, err := os.Open("./test_assets/exam.html")
+	defer f.Close()
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
+	}
+	defer f.Close()
+
+	table, err := GetExamTable(f)
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
+	}
+	cl, err := ParseExamTable(ctx, table)
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
+	}
+
+	if !reflect.DeepEqual(*cl, *examList) {
+		fmt.Printf("%#v\n", cl)
+		t.FailNow()
+	}
 }

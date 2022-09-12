@@ -3,6 +3,7 @@ package zjuapi
 import (
 	"net/http"
 	"net/http/cookiejar"
+	"time"
 )
 
 type ZJUAPIClient struct {
@@ -12,6 +13,8 @@ type ZJUAPIClient struct {
 func NewClient() *ZJUAPIClient {
 	jar, _ := cookiejar.New(nil)
 	return &ZJUAPIClient{
-		HttpClient: &http.Client{Jar: jar},
+		// 这里是为了考试页面设置了差不多合适的 timeout
+		// 校内网络环境下，大概 8~9s 左右加载完成
+		HttpClient: &http.Client{Jar: jar, Timeout: time.Second * 12},
 	}
 }

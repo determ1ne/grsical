@@ -168,7 +168,7 @@ func ClassToVEvents(ctx context.Context, firstMonday time.Time, class *[]Class, 
 								cc.Duration.Ends = int(v.(float64))
 							case "date":
 								d := fmt.Sprintf("%04d%s", d.Year(), v)
-								date, err := time.ParseInLocation("20060102", d, time.Local)
+								date, err := time.ParseInLocation("20060102", d, CSTLocation)
 								if err != nil {
 									log.Warn().Msgf("invalid date in tweak")
 									continue CCFOR
@@ -191,7 +191,7 @@ func ClassToVEvents(ctx context.Context, firstMonday time.Time, class *[]Class, 
 								ccDup.DayOfWeek = int(v.(float64))
 							case "date":
 								d := fmt.Sprintf("%04d%s", d.Year(), date.(string))
-								date, err := time.ParseInLocation("20060102", d, time.Local)
+								date, err := time.ParseInLocation("20060102", d, CSTLocation)
 								if err != nil {
 									log.Warn().Msgf("invalid date in tweak")
 									continue CCFOR
@@ -229,6 +229,21 @@ func ClassToVEvents(ctx context.Context, firstMonday time.Time, class *[]Class, 
 			}
 		}
 		cd = cd.AddDate(0, 0, 7)
+	}
+	return &vEvents, nil
+}
+
+func ExamToVEvents(ctx context.Context, exams *[]Exam) (*[]ical.VEvent, error) {
+	var vEvents []ical.VEvent
+	for _, exam := range *exams {
+		v := ical.VEvent{
+			Summary:     fmt.Sprintf("考试：%s", exam.Name),
+			Location:    fmt.Sprintf("%s %s", exam.Region, exam.Location),
+			Description: exam.ToDesc(),
+			StartTime:   exam.StartTime,
+			EndTime:     exam.EndTime,
+		}
+		vEvents = append(vEvents, v)
 	}
 	return &vEvents, nil
 }

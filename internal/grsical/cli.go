@@ -30,6 +30,7 @@ var (
 		Use:           "grsical -u username -p password -c config [-t tweak] [-o output] [-f]",
 		Short:         "grsical is a tool for generating class schedules iCalendar file",
 		Long:          `A command-line utility for generating class schedule iCalender file from extracting data from ZJU Graduate School web pages.`,
+		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE:          CliMain,
 	}

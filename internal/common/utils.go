@@ -11,6 +11,8 @@ import (
 const ContextReqId = "grsical-reqid"
 const DurationOneDay = time.Hour * 24
 
+var CSTLocation *time.Location
+
 func Lz4Encode(s string) ([]byte, error) {
 	var zout bytes.Buffer
 	zw := lz4.NewWriter(&zout)
