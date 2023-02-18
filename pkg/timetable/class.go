@@ -91,8 +91,15 @@ type Exam struct {
 	Remark    string
 }
 
-func (c *Class) ToDesc() string {
+func (c *Class) ToDesc(weekNo int) string {
 	var b strings.Builder
+	switch c.Repeat {
+	case SingleWeek:
+		b.WriteString(fmt.Sprintf("%s\\n", RepeatDesc[SingleWeek]))
+	case DoubleWeek:
+		b.WriteString(fmt.Sprintf("%s\\n", RepeatDesc[DoubleWeek]))
+	}
+	b.WriteString(fmt.Sprintf("第 %d 周\\n", weekNo+1))
 	b.WriteString(fmt.Sprintf("教师：%s\\n", c.Teacher))
 	b.WriteString(fmt.Sprintf("时间安排：%s %s %s", SemesterDesc[c.Semester], RepeatDesc[c.Repeat], c.RawDuration))
 	if c.tweakDesc != "" {

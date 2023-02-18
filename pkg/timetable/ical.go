@@ -208,9 +208,9 @@ func ClassToVEvents(ctx context.Context, firstMonday time.Time, class *[]Class, 
 			}
 
 			for _, cc := range ccLst {
-				if cc.Repeat == SingleWeek && i%2 == 0 {
+				if cc.Repeat == SingleWeek && i%2 == 1 {
 					continue
-				} else if cc.Repeat == DoubleWeek && i%2 == 1 {
+				} else if cc.Repeat == DoubleWeek && i%2 == 0 {
 					continue
 				}
 				if cc.date.IsZero() {
@@ -219,7 +219,7 @@ func ClassToVEvents(ctx context.Context, firstMonday time.Time, class *[]Class, 
 				v := ical.VEvent{
 					Summary:     cc.Name,
 					Location:    cc.Location,
-					Description: cc.ToDesc(),
+					Description: cc.ToDesc(i),
 					StartTime:   cc.date,
 					EndTime:     cc.date,
 				}
