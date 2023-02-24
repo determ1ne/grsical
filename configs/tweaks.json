@@ -1,14 +1,11 @@
 {
   "tweaks": [
-    {
-      "matchType": 0,
-      "type": 1,
-      "rule": {
-        "name": "电力市场与电力经济"
-      },
-      "op": {
-        "dayOfWeek": 6
-      }
-    }
+    { "matchType": 1, "type": 0, "rule": { "date": "0405" }, "description": "清明放假" },
+    { "matchType": 1, "type": 0, "rule": { "date": "0429" }, "description": "劳动节放假" },
+    { "matchType": 1, "type": 0, "rule": { "date": "0430" }, "description": "劳动节放假" },
+    { "matchType": 1, "type": 0, "rule": { "date": "0501" }, "description": "劳动节放假" },
+    { "matchType": 1, "type": 1, "rule": { "date": "0502" }, "op": { "date": "0619" }, "description": "劳动节放假：6月19日补5月2日课" },
+    { "matchType": 1, "type": 1, "rule": { "date": "0503" }, "op": { "date": "0514" }, "description": "劳动节放假：5月3日上5月14日课" },
+    { "matchType": 1, "type": 1, "rule": { "date": "0514" }, "op": { "date": "0503" }, "description": "劳动节放假：5月14日上5月3日课" }
   ]
 }
