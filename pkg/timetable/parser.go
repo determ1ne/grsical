@@ -4,16 +4,20 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
-	"github.com/rs/zerolog/log"
-	"golang.org/x/net/html"
-	"golang.org/x/net/html/atom"
 	"io"
 	"strconv"
 	"strings"
 	"time"
 	"unicode"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/rs/zerolog/log"
+	"golang.org/x/net/html"
+	"golang.org/x/net/html/atom"
 )
+
+const GrsTableRowNum = 16
+const UgrsTableRowNum = 15
 
 func GetTable(r io.Reader) (*html.Node, error) {
 	doc, err := goquery.NewDocumentFromReader(r)
@@ -148,18 +152,24 @@ func getValidChildren(node *html.Node) []*html.Node {
 	return c
 }
 
-func ParseTable(ctx context.Context, node *html.Node) (*[]Class, error) {
+func ParseTable(ctx context.Context, node *html.Node, isUGRS bool) (*[]Class, error) {
+	var rowNum int
+	if isUGRS {
+		rowNum = UgrsTableRowNum
+	} else {
+		rowNum = GrsTableRowNum
+	}
 	trs := goquery.NewDocumentFromNode(node).Children()
-	if trs.Length() > 16 {
+	if trs.Length() > rowNum {
 		log.Ctx(ctx).Warn().Msgf("too many tr element: %d", trs.Length())
-	} else if trs.Length() < 16 {
+	} else if trs.Length() < rowNum {
 		log.Ctx(ctx).Error().Msgf("insufficient tr element: %d", trs.Length())
 		return nil, fmt.Errorf("insufficient tr element")
 	}
 
 	var classes []Class
 	mask := [7][15]bool{}
-	for i := 1; i < 16; i++ {
+	for i := 1; i < rowNum; i++ {
 		tr := trs.Nodes[i]
 		tds := goquery.NewDocumentFromNode(tr).Children().Nodes
 		if i == 1 || i == 6 || i == 11 {

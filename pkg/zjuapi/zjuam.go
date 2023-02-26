@@ -7,13 +7,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/rs/zerolog/log"
 	"io"
 	"math/big"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/rs/zerolog/log"
 )
 
 const loginUrl = "https://zjuam.zju.edu.cn/cas/login"
@@ -143,5 +144,42 @@ func (c *ZJUAPIClient) Login(ctx context.Context, payloadUrl, username, password
 	lRes.Body.Close()
 
 	// 不代表登录成功
+	return nil
+}
+
+func (c *ZJUAPIClient) UgrsExtraLogin(ctx context.Context, payloadUrl string) error {
+	res, err := c.HttpClient.PostForm(payloadUrl, nil)
+	if err != nil {
+		e := fmt.Sprintf("can't post ugrs login url: %s", err)
+		log.Ctx(ctx).Error().Msg(e)
+		return errors.New(e)
+	}
+	content, err := io.ReadAll(res.Body)
+	res.Body.Close()
+	if err != nil {
+		e := fmt.Sprintf("can not read ugrs login page: %s", err)
+		log.Ctx(ctx).Error().Msg(e)
+		return errors.New(e)
+	}
+	idxStart := bytes.Index(content, []byte("action=\"")) + 8
+	idxStop := bytes.Index(content[idxStart:], []byte("\"")) + idxStart
+
+	newUrl, err := url.Parse(string(content[idxStart:idxStop]))
+	if err != nil {
+		e := fmt.Sprintf("can not parse new login url: %s", err)
+		log.Ctx(ctx).Error().Msg(e)
+		return errors.New(e)
+	}
+	log.Ctx(ctx).Info().Msgf("new login url: %s", newUrl.String())
+
+	newQuery := newUrl.Query()
+	newUrl.RawQuery = newQuery.Encode()
+	res, err = c.HttpClient.Get(newUrl.String())
+	res.Body.Close()
+	if err != nil {
+		e := fmt.Sprintf("can login to newURL: %s", err)
+		log.Ctx(ctx).Error().Msg(e)
+		return errors.New(e)
+	}
 	return nil
 }
