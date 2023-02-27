@@ -3,12 +3,13 @@ package timetable
 import (
 	"context"
 	"fmt"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"os"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 var classList = &[]Class{
@@ -51,7 +52,7 @@ func init() {
 
 }
 
-func testParser(t *testing.T, fileName string, classList *[]Class) {
+func testParser(t *testing.T, fileName string, classList *[]Class, isUGRS bool) {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	ctx := context.Background()
 
@@ -68,7 +69,7 @@ func testParser(t *testing.T, fileName string, classList *[]Class) {
 		t.Error(err)
 		t.FailNow()
 	}
-	cl, err := ParseTable(ctx, table)
+	cl, err := ParseTable(ctx, table, isUGRS)
 	if err != nil {
 		t.Error(err)
 		t.FailNow()
@@ -81,11 +82,11 @@ func testParser(t *testing.T, fileName string, classList *[]Class) {
 }
 
 func TestNormalParser(t *testing.T) {
-	testParser(t, "./test_assets/timetable.html", classList)
+	testParser(t, "./test_assets/timetable.html", classList, false)
 }
 
 func TestConflictParser(t *testing.T) {
-	testParser(t, "./test_assets/timetable-conflict.html", conflictClassList)
+	testParser(t, "./test_assets/timetable-conflict.html", conflictClassList, false)
 }
 
 func TestExamParser(t *testing.T) {

@@ -2,6 +2,7 @@ package common
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
@@ -16,9 +17,29 @@ import (
 func FetchToMemory(ctx context.Context, username, password string, config Config, tweaks TweakConfig) (string, error) {
 	c := zjuapi.NewClient()
 	log.Ctx(ctx).Info().Msgf("logging in for %s", username)
-	err := c.Login(ctx, zjuapi.GrsLoginUrl, username, password)
-	if err != nil {
-		return "", err
+
+	var isUGRS = false
+	// maybe not enough
+	if strings.HasPrefix(username, "3") {
+		isUGRS = true
+		log.Ctx(ctx).Info().Msgf("%s is using UGRS(beta)", username)
+	}
+
+	if isUGRS {
+		err := c.Login(ctx, zjuapi.UgrsLoginUrl, username, password)
+		if err != nil {
+			return "", err
+		}
+		// need extra login
+		err = c.UgrsExtraLogin(ctx, fmt.Sprintf("%s?gnmkdm=N253530&su=%s", zjuapi.UgrsLoginUrl2, username))
+		if err != nil {
+			return "", err
+		}
+	} else {
+		err := c.Login(ctx, zjuapi.GrsLoginUrl, username, password)
+		if err != nil {
+			return "", err
+		}
 	}
 
 	var ve []ical.VEvent
@@ -26,7 +47,7 @@ func FetchToMemory(ctx context.Context, username, password string, config Config
 	for _, fc := range config.FetchConfig {
 		log.Ctx(ctx).Info().Msgf("fetching %d-%d", fc.Year, fc.Semester)
 		year[fc.Year] = struct{}{}
-		r, err := c.FetchTimetable(ctx, fc.Year, zjuapi.GrsSemester(fc.Semester))
+		r, err := c.FetchTimetable(ctx, fc.Year, zjuapi.GrsSemester(fc.Semester), isUGRS)
 		if err != nil {
 			return "", err
 		}
@@ -37,7 +58,7 @@ func FetchToMemory(ctx context.Context, username, password string, config Config
 		}
 
 		log.Ctx(ctx).Info().Msgf("parsing %d-%d", fc.Year, fc.Semester)
-		cl, err := timetable.ParseTable(ctx, table)
+		cl, err := timetable.ParseTable(ctx, table, isUGRS)
 		if err != nil {
 			// dump table
 			var b strings.Builder
@@ -62,7 +83,7 @@ func FetchToMemory(ctx context.Context, username, password string, config Config
 	// fetch exams
 	for y, _ := range year {
 		log.Ctx(ctx).Info().Msgf("fetching exam info %d", y)
-		r, err := c.FetchExamTable(ctx, y, zjuapi.AllSemester)
+		r, err := c.FetchExamTable(ctx, y, zjuapi.AllSemester, isUGRS)
 		if err != nil {
 			log.Ctx(ctx).Error().Msgf("failed to fetch exam table, error: %s", err.Error())
 			continue
