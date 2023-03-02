@@ -25,7 +25,7 @@ make all
 
 ## As a client
 
-- Fill `configs/upfile.json`
+- Copy `configs/upfile.json.example` to `configs/upfile.json` and fill it
 - `./grsical -i ./configs/upfile.json -c ./configs/config.json -t ./configs/tweaks.json`
 
 ## As a server
